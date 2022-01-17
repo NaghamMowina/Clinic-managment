@@ -3,21 +3,22 @@ import 'package:flutter/material.dart';
 
 import 'home.dart';
 
-class ExaminationReceipt extends StatelessWidget {
+class ProcedureReceipt extends StatelessWidget {
   final String time;
   final String fee;
-  final int visitid;
+  final int procedureid;
   final int patientId;
-  const ExaminationReceipt(
+  const ProcedureReceipt(
       {Key? key,
       required this.fee,
       required this.time,
-      required this.visitid,
+      required this.procedureid,
       required this.patientId})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    @override
     Future<bool> _onWillPop() async {
       Navigator.of(context).pushAndRemoveUntil(
           CupertinoPageRoute(builder: (context) => Home()), (_) => false);
@@ -54,7 +55,7 @@ class ExaminationReceipt extends StatelessWidget {
                     )),
                     _item('Time', time),
                     _item('Fee', fee),
-                    _item('Visit Id', visitid.toString()),
+                    _item('Procedure Id', procedureid.toString()),
                     _item('Patient Reference Number', patientId.toString()),
                   ],
                 ),

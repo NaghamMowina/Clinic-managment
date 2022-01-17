@@ -1,27 +1,27 @@
 class Visit {
-  final int? patientid;
-  final int? scheduleid;
-  final String time;
-  final String type;
-  final String assesment;
-  final String fees;
+  final int? visitId;
+  final int? patientId;
+  final String? time;
+  final String? type;
+  final String? assesment;
+  final String? fees;
   Visit(
-      {this.patientid,
-      this.scheduleid,
-      required this.fees,
-      required this.time,
-      required this.type,
-      required this.assesment});
+      {this.visitId,
+      this.fees,
+      this.time,
+      this.type,
+      this.patientId,
+      this.assesment});
   factory Visit.fromMap(Map<String, dynamic> json) => Visit(
-      patientid: json['FK_patientId'],
-      scheduleid: json['FK_scheduleId'],
+      patientId: json['FK_patientId'],
+      visitId: json['visitId'],
       fees: json['fees'],
       time: json['time'],
       type: json['type'],
       assesment: json['assessment']);
   Map<String, dynamic> toMap() => {
-        'FK_patientId': patientid,
-        'FK_scheduleId': scheduleid,
+        'FK_patientId': patientId,
+        'visitId': visitId,
         'fees': fees,
         'time': time,
         'type': type,

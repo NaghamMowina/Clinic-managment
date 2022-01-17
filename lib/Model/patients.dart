@@ -1,13 +1,9 @@
 class Patient {
   final int? patientid;
-  final String name;
-  final int age;
-  final int phone;
-  Patient(
-      {this.patientid,
-      required this.age,
-      required this.name,
-      required this.phone});
+  final String? name;
+  final int? age;
+  final int? phone;
+  Patient({this.patientid, this.age, this.name, this.phone});
   factory Patient.fromMap(Map<String, dynamic> json) => Patient(
       patientid: json['patientId'],
       name: json['name'],

@@ -1,5 +1,7 @@
+import 'package:clinic/Model/patients.dart';
 import 'package:clinic/Model/schedule.dart';
 import 'package:clinic/db.dart';
+import 'package:clinic/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
@@ -20,7 +22,7 @@ class _ReservationForumState extends State<ReservationForum> {
 
   late String dateTime;
 
-  TimeOfDay selectedTime = TimeOfDay(hour: 00, minute: 00);
+  TimeOfDay selectedTime = const TimeOfDay(hour: 00, minute: 00);
   TextEditingController _timeController = TextEditingController();
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -155,58 +157,90 @@ class _ReservationForumState extends State<ReservationForum> {
                   width: 100,
                   child: ElevatedButton(
                       onPressed: () async {
-                        var schedule = Schedule(
-                            patientid: int.parse(_IdController.text),
-                            time: selectedDate.toString() +
-                                ' ' +
-                                selectedTime.toString());
-                        List lst = await DB.instance.checkSchedule(schedule);
-                        int check;
-                        print(lst);
-                        if (lst.isNotEmpty) {
+                        if (_IdController.text.isEmpty || _time.isEmpty) {
                           showTopSnackBar(
                             context,
                             const CustomSnackBar.error(
-                              message:
-                                  "It's reserved please choose another time",
+                              message: "Please fill all fields",
                             ),
                           );
-                        }
-                        if (lst.isEmpty) {
-                          check = await DB.instance.insertAppointment(schedule);
-                          print(check);
-                          showTopSnackBar(
-                            context,
-                            const CustomSnackBar.success(
-                              message: "Reserved successfully",
-                            ),
-                          );
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  content: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                            'Your appointment number are $check'),
+                        } else {
+                          var patient =
+                              Patient(patientid: int.parse(_IdController.text));
+                          List checkPatients =
+                              await DB.instance.checkpatientexist(patient);
+                          if (checkPatients.isEmpty) {
+                            showTopSnackBar(
+                              context,
+                              const CustomSnackBar.error(
+                                message: "No Patients found with this number",
+                              ),
+                            );
+                          } else {
+                            var schedule = Schedule(
+                                patientid: int.parse(_IdController.text),
+                                time:
+                                    "${selectedDate.toLocal()}".split(' ')[0] +
+                                        ' ' +
+                                        _time);
+                            List lst =
+                                await DB.instance.checkSchedule(schedule);
+                            int check;
+                            print(lst);
+                            if (lst.isNotEmpty) {
+                              showTopSnackBar(
+                                context,
+                                const CustomSnackBar.error(
+                                  message:
+                                      "It's reserved please choose another time",
+                                ),
+                              );
+                            }
+                            if (lst.isEmpty) {
+                              check =
+                                  await DB.instance.insertAppointment(schedule);
+                              print(check);
+                              showTopSnackBar(
+                                context,
+                                const CustomSnackBar.success(
+                                  message: "Reserved successfully",
+                                ),
+                              );
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      content: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                                'Your appointment number are $check'),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  actions: <Widget>[
-                                    TextButton(
-                                        style: TextButton.styleFrom(
-                                            primary: Colors.blue),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text("OK")),
-                                  ],
-                                );
-                              });
+                                      actions: <Widget>[
+                                        TextButton(
+                                            style: TextButton.styleFrom(
+                                                primary: Colors.blue),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              Navigator.of(context)
+                                                  .pushReplacement(
+                                                      MaterialPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              const Home()));
+                                            },
+                                            child: Text("OK")),
+                                      ],
+                                    );
+                                  });
+                            }
+                          }
                         }
                       },
                       child: const Text(

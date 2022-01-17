@@ -1,22 +1,21 @@
 import 'package:clinic/Model/patients.dart';
-import 'package:clinic/Model/visit.dart';
+import 'package:clinic/Model/procedure.dart';
 import 'package:clinic/db.dart';
-import 'package:clinic/screens/examination_receipt.dart';
+import 'package:clinic/screens/procedure_receipt.dart';
 import 'package:flutter/material.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
-class ExaminationPay extends StatefulWidget {
-  const ExaminationPay({Key? key}) : super(key: key);
+class ProcedurePay extends StatefulWidget {
+  const ProcedurePay({Key? key}) : super(key: key);
 
   @override
-  _ExaminationPayState createState() => _ExaminationPayState();
+  _ProcedurePayState createState() => _ProcedurePayState();
 }
 
-class _ExaminationPayState extends State<ExaminationPay> {
-  var dropdownvalue;
-  TextEditingController _patientController = new TextEditingController();
-  TextEditingController _feesController = new TextEditingController();
+class _ProcedurePayState extends State<ProcedurePay> {
+  TextEditingController _patientController = TextEditingController();
+  TextEditingController _feesController = TextEditingController();
   String type = 'Examination';
   @override
   Widget build(BuildContext context) {
@@ -53,7 +52,7 @@ class _ExaminationPayState extends State<ExaminationPay> {
                 child: TextFormField(
                   controller: _feesController,
                   decoration: const InputDecoration(
-                    labelText: "Enter Examination fees",
+                    labelText: "Enter Procedure fees",
                     labelStyle:
                         TextStyle(color: Color.fromRGBO(20, 61, 102, 1)),
                     fillColor: Colors.white,
@@ -65,42 +64,7 @@ class _ExaminationPayState extends State<ExaminationPay> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 30.0, left: 30, top: 15),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: dropdownvalue,
-                    hint: Padding(
-                      padding: EdgeInsets.all(1),
-                      child: Text('Choose type of visit'),
-                    ),
-                    style: const TextStyle(fontSize: 20, color: Colors.black),
-                    underline: Container(
-                      height: 30,
-                      color: Colors.transparent,
-                    ),
-                    onChanged: (String? newValue) async {
-                      setState(() {
-                        dropdownvalue = newValue!;
-                      });
-                    },
-                    items: ['Examination', 'Consultation']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 1),
-                          child: Text(
-                            value,
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(30.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Center(
                     child: SizedBox(
                   height: 50,
@@ -129,22 +93,21 @@ class _ExaminationPayState extends State<ExaminationPay> {
                             );
                           } else {
                             String time = DateTime.now().toString();
-                            var pay = Visit(
-                                fees: _feesController.text,
-                                patientId: int.parse(_patientController.text),
-                                // scheduleid: int.parse(_scheduleController.text),
-                                time: time,
-                                type: type,
-                                assesment: 'assesment');
-                            int visit = await DB.instance.insertVisit(pay);
+                            var pay = Procedure(
+                              fees: _feesController.text,
+                              patientId: int.parse(_patientController.text),
+                              time: time,
+                            );
+                            int procedure =
+                                await DB.instance.insertProcedure(pay);
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (BuildContext context) =>
-                                    ExaminationReceipt(
+                                    ProcedureReceipt(
                                       patientId:
                                           int.parse(_patientController.text),
                                       fee: _feesController.text,
                                       time: time,
-                                      visitid: visit,
+                                      procedureid: procedure,
                                     )));
                           }
                         }

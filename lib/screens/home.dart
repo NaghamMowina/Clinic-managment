@@ -1,6 +1,10 @@
 import 'package:animated_button/animated_button.dart';
+import 'package:clinic/Model/schedule.dart';
+import 'package:clinic/screens/assessment.dart';
 import 'package:clinic/screens/examination_pay.dart';
+import 'package:clinic/screens/procedure_pay.dart';
 import 'package:clinic/screens/reservation.dart';
+import 'package:clinic/screens/schedule_screen.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -24,7 +28,7 @@ class _HomeState extends State<Home> {
           children: [
             Padding(
               padding:
-                  EdgeInsets.only(top: MediaQuery.of(context).size.height / 8),
+                  EdgeInsets.only(top: MediaQuery.of(context).size.height / 12),
               child: Image.asset(
                 "images/logo.png",
                 scale: 2.5,
@@ -64,8 +68,40 @@ class _HomeState extends State<Home> {
             ),
             Center(
               child: AnimatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => const ProcedurePay()));
+                },
                 child: const Text('Pay Procedure',
+                    style:
+                        TextStyle(fontFamily: 'Mochiy', color: Colors.white)),
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            Center(
+              child: AnimatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          const ScheduleScreen()));
+                },
+                child: const Text('Schedule',
+                    style:
+                        TextStyle(fontFamily: 'Mochiy', color: Colors.white)),
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            Center(
+              child: AnimatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => const Assessment()));
+                },
+                child: const Text('Assessment',
                     style:
                         TextStyle(fontFamily: 'Mochiy', color: Colors.white)),
               ),

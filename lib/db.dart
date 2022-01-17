@@ -1,4 +1,5 @@
 import 'package:clinic/Model/patients.dart';
+import 'package:clinic/Model/procedure.dart';
 import 'package:clinic/Model/schedule.dart';
 import 'package:clinic/Model/visit.dart';
 import 'package:sqflite/sqflite.dart';
@@ -30,9 +31,11 @@ class DB {
     await db.execute(
         "create table patients(patientId integer primary key autoincrement, name varchar(50), age integer, phone integer)");
     await db.execute(
-        "create table visit(visitId integer primary key autoincrement,fees text, time text, assessment text, type text,FK_patientId INTEGER,FOREIGN KEY(FK_patientId) REFERENCES patients(patientId),FK_scheduleId INTEGER,FOREIGN KEY(FK_scheduleId) REFERENCES schedule(id))");
+        "create table visit(visitId integer primary key autoincrement,fees text, time text, assessment text, type text,FK_patientId INTEGER,FOREIGN KEY(FK_patientId) REFERENCES patients(patientId))");
     await db.execute(
         "create table schedule(id integer primary key autoincrement, time text,FK_patientId INTEGER, FOREIGN KEY(FK_patientId) REFERENCES patients(patientId))");
+    await db.execute(
+        "create table procedure(procedureId integer primary key autoincrement,fees text, time text,FK_patientId INTEGER,FOREIGN KEY(FK_patientId) REFERENCES patients(patientId))");
   }
 
   Future _onConfigure(Database db) async {
@@ -50,6 +53,11 @@ class DB {
     return db.insert("visit", visit.toMap());
   }
 
+  Future<int> insertProcedure(Procedure procedure) async {
+    final db = await instance.database;
+    return db.insert("procedure", procedure.toMap());
+  }
+
   Future<int> insertAppointment(Schedule schedule) async {
     final db = await instance.database;
     return db.insert("schedule", schedule.toMap());
@@ -62,6 +70,27 @@ class DB {
     return result.map((json) => Schedule.fromMap(json)).toList();
   }
 
+  Future<List<Patient>> checkpatientexist(Patient patient) async {
+    final db = await instance.database;
+    final result = await db.query('patients',
+        where: 'patientId = ?', whereArgs: [patient.patientid]);
+    return result.map((json) => Patient.fromMap(json)).toList();
+  }
+
+  Future<List<Visit>> checkVisitexist(Visit visit) async {
+    final db = await instance.database;
+    final result = await db
+        .query('visit', where: 'visitId = ?', whereArgs: [visit.visitId]);
+    return result.map((json) => Visit.fromMap(json)).toList();
+  }
+
+  Future<List> getScehdule() async {
+    final db = await instance.database;
+    // final List<Map<String, Object?>> schedule =
+    return db.query("schedule");
+    //return schedule.map((e) => Schedule.fromMap(e)).toList();
+  }
+
   Future<int> updateAssesment(Visit visit) async {
     final db = await instance.database;
 
@@ -69,7 +98,7 @@ class DB {
       'visit',
       visit.toMap(),
       where: 'visitId = ?',
-      whereArgs: [visit.scheduleid],
+      whereArgs: [visit.visitId],
     );
   }
 }
